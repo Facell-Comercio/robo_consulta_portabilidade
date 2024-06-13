@@ -2,17 +2,20 @@ const cron = require('node-cron');
 const { pupInit, pupClose } = require('./src/pup');
 const { loginMartim, capturarDados } = require('./src/captura-portabilidade');
 const { delay } = require('./src/helper');
+const { getClientes, updateClientes } = require('./src/database');
 require('dotenv').config();
 
 const username = process.env.MATRICULA;
 const password = process.env.SENHA;
 
-async function init() {
+async function init({grupo_economico}) {
     try {
+        // console.log('Iniciou')
         // * 1º Obter as linhas a analisar:
-        const gsms = [
-            '84987380950', '84996238636', '84994625306', '84988917645', '84994612072'
-        ]
+        const clientes = await getClientes({grupo_economico})
+        if(!clientes || !clientes.length){
+            throw new Error('Nenhum cliente recebido')
+        }
 
         // * 2º Criar o Browser e a Page:
         const { browser, page } = await pupInit(false)
@@ -38,13 +41,26 @@ async function init() {
         await delay(2000)
 
         // * 4º Loop e Captura:
-        for (const gsm of gsms) {
+        for (const cliente of clientes) {
             let tentativasCaptura = 1;
             while (tentativasCaptura <= 3) {
                 try {
-                    const clienteAtualizado = await capturarDados({ page, cliente: { gsm, status: 'NÃO ENCONTRADO', motivo: null, acao: null } })
+                    const clienteAtualizado = await capturarDados({ 
+                        page, 
+                        cliente: { 
+                            id: cliente.id, 
+                            gsm: cliente.gsm, 
+                            status: 'NÃO ENCONTRADO', 
+                            motivo: null, 
+                        } 
+                    })
+                    cliente.status = clienteAtualizado.status
+                    cliente.motivo = clienteAtualizado.motivo
                     break;
-                } catch (error) {
+                } catch (error) { 
+                    cliente.status = 'NÃO ENCONTRADO'
+                    cliente.motivo = null
+
                     console.log(`Tentativa: ${tentativasCaptura} Linha: ${linha}`)
                     tentativasCaptura++
                 }
@@ -52,14 +68,22 @@ async function init() {
         }
 
         // * 5º Update no banco:
+        await updateClientes({grupo_economico, clientes})
 
 
         // * 6º Finalização:
         await pupClose({ browser, page })
 
+        console.log(`Captura realizada em ${new Date().toLocaleDateString('pt-BR', {hour: '2-digit', minute: '2-digit'})}`)
     } catch (error) {
         console.log('FATAL_ERROR:', error)
     }
 }
 
-init()
+init({grupo_economico: 'FACELL'})
+setTimeout(()=>{
+    init({grupo_economico: 'FORTTELECOM'})
+}, 1000 * 60 * 60)
+
+cron.schedule('0 4 * * *', ()=>{init({grupo_economico: 'FACELL'})})
+cron.schedule('0 5 * * *', ()=>{init({grupo_economico: 'FORTTELECOM'})})
