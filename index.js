@@ -18,7 +18,7 @@ async function init({grupo_economico}) {
         }
 
         // * 2º Criar o Browser e a Page:
-        const { browser, page } = await pupInit(false)
+        const { browser, page } = await pupInit(true)
 
         // * 3º login:
         let tentativasLogin = 1;
