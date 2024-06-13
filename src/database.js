@@ -16,7 +16,6 @@ async function getClientes({ grupo_economico }) {
                     AND status_portabilidade <> 'ANTIGO' 
                     AND status_portabilidade <> 'ATIVA'
                     AND dtAtivacao BETWEEN ? AND ?
-                    LIMIT 10
                 `, [dataInicial, dataFinal])
 
             resolve(gsms)

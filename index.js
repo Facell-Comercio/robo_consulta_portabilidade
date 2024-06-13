@@ -87,3 +87,6 @@ setTimeout(()=>{
 
 cron.schedule('0 4 * * *', ()=>{init({grupo_economico: 'FACELL'})})
 cron.schedule('0 5 * * *', ()=>{init({grupo_economico: 'FORTTELECOM'})})
+
+cron.schedule('0 13 * * *', ()=>{init({grupo_economico: 'FACELL'})})
+cron.schedule('0 14 * * *', ()=>{init({grupo_economico: 'FORTTELECOM'})})
