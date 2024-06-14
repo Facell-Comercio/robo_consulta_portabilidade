@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const { pupInit, pupClose } = require('./src/pup');
 const { loginMartim, capturarDados } = require('./src/captura-portabilidade');
 const { delay } = require('./src/helper');
-const { getClientes, updateClientes, updateCliente } = require('./src/database');
+const { getClientes, updateClientes, updateCliente, updateAtt } = require('./src/database');
 require('dotenv').config();
 
 const username = process.env.MATRICULA;
@@ -72,6 +72,9 @@ async function init({ grupo_economico }) {
         // * 6º Finalização:
         await pupClose({ browser, page })
 
+        // * 7º Update ATT
+        await updateAtt({grupo_economico})
+        
         console.log(`Captura ${grupo_economico} realizada em ${new Date().toLocaleDateString('pt-BR', { hour: '2-digit', minute: '2-digit' })}. ${clientes.length} clientes`)
     } catch (error) {
         console.log('FATAL_ERROR:', error)

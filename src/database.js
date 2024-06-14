@@ -93,8 +93,35 @@ async function updateCliente({ grupo_economico, cliente }) {
     })
 }
 
+async function updateAtt({ grupo_economico }) {
+    return new Promise(async (resolve, reject) => {
+        const conn = await db.getConnection()
+        try {
+            if (!grupo_economico) {
+                throw new Error('Nenhum cliente a importar')
+            }
+            const relatorio = grupo_economico == 'FACELL' ? 'portab-facell' : 'portab-fort';
+
+                await conn.execute(`
+                    UPDATE facell_esteira_att
+                    SET
+                        data = current_timestamp()
+                    WHERE 
+                        relatorio = ?`,
+                    [relatorio])
+
+            resolve(true)
+        } catch (error) {
+            reject('ERRO_UPDATE_CLIENTES_PORTABILIDADE', error)
+        }finally{
+            conn.release()
+        }
+    })
+}
+
 module.exports = {
     getClientes,
     updateCliente,
-    updateClientes
+    updateClientes,
+    updateAtt,
 }
