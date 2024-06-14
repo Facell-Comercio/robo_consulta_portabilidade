@@ -12,7 +12,8 @@ async function getClientes({ grupo_economico }) {
 
             const [gsms] = await conn.execute(`SELECT id, gsm FROM ${facell_docs} 
                 WHERE 
-                    NOT gsmProvisorio IS NULL
+                    NOT modalidade = 'PORTABILIDADE PRÉ-PAGO'
+                    AND NOT gsmProvisorio IS NULL
                     AND status_portabilidade <> 'ANTIGO' 
                     AND status_portabilidade <> 'ATIVA'
                     AND dtAtivacao BETWEEN ? AND ?

@@ -78,10 +78,10 @@ async function init({ grupo_economico }) {
     }
 }
 
-init({ grupo_economico: 'FORTTELECOM' })
-setTimeout(() => {
-    init({ grupo_economico: 'FACELL' })
-}, 1000 * 60 * 60)
+// init({ grupo_economico: 'FORTTELECOM' })
+// setTimeout(() => {
+//     init({ grupo_economico: 'FACELL' })
+// }, 1000 * 60 * 60)
 
 cron.schedule('0 4 * * *', () => { init({ grupo_economico: 'FACELL' }) })
 cron.schedule('0 5 * * *', () => { init({ grupo_economico: 'FORTTELECOM' }) })
