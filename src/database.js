@@ -46,7 +46,7 @@ async function updateClientes({ grupo_economico, clientes }) {
                     WHERE 
                         id = ?`,
                     [
-                        cliente.status?.substring(0,50) || 'NÃO LOCALIZADO',
+                        cliente.status?.substring(0,50) || 'NÃO ENCONTRADO',
                         cliente.motivo?.substring(0,100) || '',
                         cliente.id
                     ])
@@ -79,7 +79,7 @@ async function updateCliente({ grupo_economico, cliente }) {
                     WHERE 
                         id = ?`,
                     [
-                        cliente.status?.substring(0,50) || 'NÃO LOCALIZADO',
+                        cliente.status?.substring(0,50) || 'NÃO ENCONTRADO',
                         cliente.motivo?.substring(0,100) || '',
                         cliente.id
                     ])
