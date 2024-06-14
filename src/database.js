@@ -45,8 +45,8 @@ async function updateClientes({ grupo_economico, clientes }) {
                     WHERE 
                         id = ?`,
                     [
-                        cliente.status,
-                        cliente.motivo,
+                        cliente.status?.substring(0,50) || 'NÃO LOCALIZADO',
+                        cliente.motivo?.substring(0,100) || '',
                         cliente.id
                     ])
             }
@@ -61,7 +61,39 @@ async function updateClientes({ grupo_economico, clientes }) {
     })
 }
 
+async function updateCliente({ grupo_economico, cliente }) {
+    return new Promise(async (resolve, reject) => {
+        const conn = await db.getConnection()
+        try {
+            if (!cliente) {
+                throw new Error('Nenhum cliente a importar')
+            }
+            const facell_docs = grupo_economico == 'FACELL' ? 'facell_docs' : 'facell_docs_fort';
+
+                await conn.execute(`
+                    UPDATE ${facell_docs}
+                    SET
+                        status_portabilidade = ?,
+                        motivo_portabilidade = ?
+                    WHERE 
+                        id = ?`,
+                    [
+                        cliente.status?.substring(0,50) || 'NÃO LOCALIZADO',
+                        cliente.motivo?.substring(0,100) || '',
+                        cliente.id
+                    ])
+
+            resolve(true)
+        } catch (error) {
+            reject('ERRO_UPDATE_CLIENTES_PORTABILIDADE', error)
+        }finally{
+            conn.release()
+        }
+    })
+}
+
 module.exports = {
     getClientes,
+    updateCliente,
     updateClientes
 }
