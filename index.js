@@ -10,16 +10,16 @@ const password = process.env.SENHA;
 
 async function init({ grupo_economico }) {
     try {
-        // console.log('Iniciou')
         // * 1º Obter as linhas a analisar:
         const clientes = await getClientes({ grupo_economico })
         if (!clientes || !clientes.length) {
             throw new Error('Nenhum cliente recebido')
         }
-
+        console.log(`Iniciando consulta ${grupo_economico} ${new Date().toLocaleDateString('pt-BR', { hour: '2-digit', minute: '2-digit' })}. ${clientes.length} clientes`)
+        
         // * 2º Criar o Browser e a Page:
         const { browser, page } = await pupInit(true)
-
+        
         // * 3º login:
         let tentativasLogin = 1;
         let loginRealizado = false;
@@ -33,13 +33,13 @@ async function init({ grupo_economico }) {
                 tentativasLogin++
             }
         }
-
+        
         if (!loginRealizado) {
             throw new Error('Falha no login do Martim')
         }
         await page.goto('https://capgeminibr.service-now.com/tim?id=tim_consulta_portabilidade')
         await delay(2000)
-
+        
         // * 4º Loop e Captura:
         for (const cliente of clientes) {
             let tentativasCaptura = 1;
