@@ -86,8 +86,8 @@ async function init({ grupo_economico }) {
 //     init({ grupo_economico: 'FACELL' })
 // }, 1000 * 60 * 60)
 
-cron.schedule('0 4 * * *', () => { init({ grupo_economico: 'FACELL' }) })
-cron.schedule('0 5 * * *', () => { init({ grupo_economico: 'FORTTELECOM' }) })
+cron.schedule('0 5 * * *', () => { init({ grupo_economico: 'FACELL' }) })
+cron.schedule('0 6 * * *', () => { init({ grupo_economico: 'FORTTELECOM' }) })
 
 cron.schedule('0 13 * * *', () => { init({ grupo_economico: 'FACELL' }) })
 cron.schedule('0 14 * * *', () => { init({ grupo_economico: 'FORTTELECOM' }) })
